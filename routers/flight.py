@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
-from config.database import Database
-from schemas.flight import Flight
 from typing import List
-from services.flight import FlightService
+from sqlalchemy.orm import Session
+# from services.flight import TripService
+# from schemas.flight import TripCreate, Trip
 
-flight_router = APIRouter()
+# from database.database import Database
 
-@flight_router.get("/flight", tags=["flights"], status_code=200)
-async def get_flights() -> List[Flight]:
-    db = Database
-    service = await FlightService(db)
-    result = service.get_flights()
-    return result
+# router = APIRouter()
+
+# @router.get("/flight", response_model=List[Trip])
+# async def get_flights(db: Database = Depends(), skip: int = 0, limit: int = 100):
+#     trip_service = TripService(db)
+#     flights = trip_service.get_flights(skip=skip, limit=limit)
+#     return flights

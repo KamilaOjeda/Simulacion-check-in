@@ -1,13 +1,19 @@
-MYSQL_USER = "bsale_test"
-MYSQL_PASSWORD = "bsale_test"
-MYSQL_HOST = "mdb-test.c6vunyturrl6.us-west-1.rds.amazonaws.com"
-MYSQL_DATABASE = "airlane"
-MYSQL_PORT = "3306"
+# import os
+# from dotenv import load_dotenv
 
-# Configuración de CORS, para permitir el acceso desde distintos orígenes
-ALLOWED_ORIGINS = [
-    "http://localhost",
-    "http://localhost:8000",
-    "http://localhost:8080",
-    "http://localhost:3000",
-]
+# load_dotenv()
+
+# DB_HOST = os.getenv("DB_HOST")
+# DB_PORT = os.getenv("DB_PORT")
+# DB_NAME = os.getenv("DB_NAME")
+# DB_USER = os.getenv("DB_USER")
+# DB_PASSWORD = os.getenv("DB_PASSWORD")
+
+# DB_CONFIG = {
+#     "user": DB_USER,
+#     "password": DB_PASSWORD,
+#     "host": DB_HOST,
+#     "database": DB_NAME,
+#     "port": DB_PORT,
+#     "autocommit": True
+# }
