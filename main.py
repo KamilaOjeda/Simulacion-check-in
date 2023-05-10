@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import mysql.connector
 from mysql.connector import errorcode
 from pydantic import BaseModel
+from schemas.boarding_pass import BoardingPass
 
 app = FastAPI()
 # Configuración CORS, para permitir el acceso desde diferentes orígenes
@@ -21,16 +22,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-class BoardingPass:
-    def __init__(self, boardingPassId, purchaseId, passengerId, seatTypeId, seatId, flightId):
-        self.boardingPassId = boardingPassId
-        self.purchaseId = purchaseId
-        self.passengerId = passengerId
-        self.seatTypeId = seatTypeId
-        self.seatId = seatId
-        self.flightId = flightId
 
 
 @app.get("/boarding_pass")
