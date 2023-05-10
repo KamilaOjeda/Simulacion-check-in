@@ -6,4 +6,3 @@ class Flight:
         self.landingDateTime = landingDateTime
         self.landingAirport = landingAirport
         self.airplaneId = airplaneId
-

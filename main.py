@@ -5,6 +5,7 @@ import mysql.connector
 from mysql.connector import errorcode
 from pydantic import BaseModel
 from schemas.boarding_pass import BoardingPass
+from schemas.flight import Flight
 
 app = FastAPI()
 # Configuración CORS, para permitir el acceso desde diferentes orígenes
@@ -22,37 +23,36 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.get("/boarding_pass")
-def get_boarding_passs():
+def get_connection():
     try:
-        connection = mysql.connector.connect(user="bsale_test", password="bsale_test",
-                                             host="mdb-test.c6vunyturrl6.us-west-1.rds.amazonaws.com",  database="airline", port="3306")
+        connection = mysql.connector.connect(
+            user="bsale_test", 
+            password="bsale_test", 
+            host="mdb-test.c6vunyturrl6.us-west-1.rds.amazonaws.com",  
+            database="airline", 
+            port="3306")
         print("Conexión exitosa a la base de datos")
+            
     except mysql.connector.Error as e:
-        print("Error al conectarse a la base de datos: {}".format(e))
-
-    cursor = connection.cursor()
+        print("Error al conectarse a la base de datos: {}".format(e)) 
     connection.autoreconnect = True
     connection.pool_size = 5
-
+    return connection
+        
+@app.get("/boarding_pass")
+def get_boarding_passs(): 
+    connection = get_connection()
     query = "SELECT * FROM boarding_pass"
+    cursor = connection.cursor()
     cursor.execute(query)
 
     results = cursor.fetchall()
 
     for row in results:
-        print("boarding_pass_id: ", row[0])
-        # print("purchase_id: ", row[1])
-        # print("passenger_id: ", row[2])
-        # print("seat_type_id: ", row[3])
-        # print("flight_id: ", row[3])
         my_boarding_pass = BoardingPass(
             row[0], row[1], row[2], row[3], row[4], row[5])
         print(my_boarding_pass)
 
-    cursor.close()
     connection.close()
     # print(results)
     return {"boarding_pass": results}
