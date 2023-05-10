@@ -6,6 +6,11 @@ from mysql.connector import errorcode
 from pydantic import BaseModel
 from schemas.boarding_pass import BoardingPass
 from schemas.flight import Flight
+from schemas.passenger import Passenger
+from schemas.purchase import Purchase
+from schemas.seat_type import SeatType
+from schemas.seat import Seat
+from schemas.airplane import Airplane
 
 app = FastAPI()
 # Configuración CORS, para permitir el acceso desde diferentes orígenes
@@ -57,8 +62,130 @@ def get_boarding_passs():
     # print(results)
     return {"boarding_pass": results}
 
-
 get_boarding_passs()
+
+@app.get("/flights")
+def get_flights(): 
+    connection = get_connection()
+    query = "SELECT * FROM boarding_pass"
+    cursor = connection.cursor()
+    cursor.execute(query)
+
+    results = cursor.fetchall()
+
+    for row in results:
+        flights = Flight(
+            row[0], row[1], row[2], row[3], row[4], row[5])
+        print(flights)
+
+    connection.close()
+    # print(results)
+    return {"flights": results}
+
+get_flights()
+
+@app.get("/passengers")
+def get_passengers(): 
+    connection = get_connection()
+    query = "SELECT * FROM boarding_pass"
+    cursor = connection.cursor()
+    cursor.execute(query)
+
+    results = cursor.fetchall()
+
+    for row in results:
+        passengers = Passenger(
+            row[0], row[1], row[2], row[3], row[4], row[5])
+        print(passengers)
+
+    connection.close()
+    # print(results)
+    return {"passengers": results}
+
+get_passengers()
+
+@app.get("/purchases")
+def get_purchases(): 
+    connection = get_connection()
+    query = "SELECT * FROM boarding_pass"
+    cursor = connection.cursor()
+    cursor.execute(query)
+
+    results = cursor.fetchall()
+
+    for row in results:
+        purchases = Purchase(
+            row[0], row[1], row[2], row[3], row[4], row[5])
+        print(purchases)
+
+    connection.close()
+    # print(results)
+    return {"purchases": results}
+
+get_purchases()
+
+@app.get("/seats")
+def get_seats(): 
+    connection = get_connection()
+    query = "SELECT * FROM boarding_pass"
+    cursor = connection.cursor()
+    cursor.execute(query)
+
+    results = cursor.fetchall()
+
+    for row in results:
+        seats = Seat(
+            row[0], row[1], row[2], row[3], row[4], row[5])
+        print(seats)
+
+    connection.close()
+    # print(results)
+    return {"seats": results}
+
+get_seats()
+
+@app.get("/seats_type")
+def get_seats_type(): 
+    connection = get_connection()
+    query = "SELECT * FROM boarding_pass"
+    cursor = connection.cursor()
+    cursor.execute(query)
+
+    results = cursor.fetchall()
+
+    for row in results:
+        seats_type = SeatType(
+            row[0], row[1], row[2], row[3], row[4], row[5])
+        print(seats_type)
+
+    connection.close()
+    # print(results)
+    return {"seats_type": results}
+
+get_seats_type()
+
+@app.get("/airplanes")
+def get_airplanes(): 
+    connection = get_connection()
+    query = "SELECT * FROM boarding_pass"
+    cursor = connection.cursor()
+    cursor.execute(query)
+
+    results = cursor.fetchall()
+
+    for row in results:
+        airplanes = Airplane(
+            row[0], row[1], row[2], row[3], row[4], row[5])
+        print(airplanes)
+
+    connection.close()
+    # print(results)
+    return {"airplanes": results}
+
+get_airplanes()
+
+
+
 
 # app = FastAPI()
 # app.title = "Reto técnico: Simulación check-in aerolínea"
