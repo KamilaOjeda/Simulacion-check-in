@@ -1,9 +1,8 @@
-# from pydantic import BaseModel, Field
-
-# class Flight(BaseModel):
-#     flight_id: int
-#     takeoff_date_time: int
-#     takeoff_airport: str = Field(max_length=255)
-#     landing_date_time: int
-#     landing_airport: str = Field(max_length=255)
-#     airplane_id: int
+class Flight:
+    def __init__(self, flightId, takeoffDateTime, takeoffAirport, landingDateTime, landingAirport, airplaneId):
+        self.flightId = flightId
+        self.takeoffDateTime = takeoffDateTime
+        self.takeoffAirport = takeoffAirport
+        self.landingDateTime = landingDateTime
+        self.landingAirport = landingAirport
+        self.airplaneId = airplaneId
