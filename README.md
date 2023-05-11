@@ -35,7 +35,7 @@ Por el momento,
 
 1. Clonar el repositorio:
 
-    https://github.com/KamilaOjeda/Simulacion-check-in-aerolinea
+    https://github.com/KamilaOjeda/Simulacion-check-in
 
 
 2. Instalar las dependencias:
