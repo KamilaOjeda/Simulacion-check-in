@@ -15,6 +15,6 @@ class PassengerWithBoardingPass:
 
 class PassengerWithBoardingPassEncoder(json.JSONEncoder):
     def default(self, o: Any) -> Any:
-        if isinstance(o, PassengerWithBoardingPassEncoder):
+        if isinstance(o, PassengerWithBoardingPass):
             return o.__dict__
         return json.JSONEncoder.default(self,o)
