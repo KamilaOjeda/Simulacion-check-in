@@ -3,13 +3,10 @@ from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 import mysql.connector
 from schemas.boarding_pass import BoardingPass
-from schemas.flight import Flight
-from schemas.passenger import Passenger
-from schemas.purchase import Purchase
-from schemas.seat_type import SeatType
-from schemas.seat import Seat
-from schemas.airplane import Airplane
+from schemas.passenger_with_pass import PassengerWithBoardingPass, PassengerWithBoardingPassEncoder
+from typing import List
 import json
+import asyncio
 
 app = FastAPI()
 # Configuración CORS, para permitir el acceso desde diferentes orígenes
@@ -27,9 +24,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-def get_connection():
+async def get_connection():
     try:
-        connection = mysql.connector.connect(
+        connection = await mysql.connector.connect(
             user="bsale_test", 
             password="bsale_test", 
             host="mdb-test.c6vunyturrl6.us-west-1.rds.amazonaws.com",  
@@ -39,10 +36,48 @@ def get_connection():
             
     except mysql.connector.Error as e:
         print("Error al conectarse a la base de datos: {}".format(e)) 
-    connection.autoreconnect = True
-    connection.pool_size = 5
-    return connection
         
+    connection.autoreconnect = True
+    connection.pool_size = 30
+    return connection
+
+    
+async def transform_to_boarding_pass(row):
+    return await BoardingPass(row[0], row[1], row[2], row[3], row[4], row[5])
+
+async def get_passenger_from_boarding_pass(boarding_pass: BoardingPass, cursor) -> PassengerWithBoardingPass:
+    query = f"SELECT * FROM passenger WHERE passenger_id = {boarding_pass.passengerId}".format(boarding_pass.passengerId)
+    cursor.execute(query)
+    row = await cursor.fetchone()
+    return PassengerWithBoardingPass(row[0], row[1], row[2], row[3], row[4], boarding_pass.boardingPassId, boarding_pass.purchaseId, boarding_pass.seatTypeId, boarding_pass.seatId)
+
+async def get_boarding_pass_list_by_flight_by_id(id: int, cursor):
+    query = f"SELECT * FROM boarding_pass WHERE flight_id = {id} LIMIT 1".format(id)
+    cursor.execute(query)
+
+    result = await cursor.fetchall()
+    my_boarding_pass_list = map(transform_to_boarding_pass, result)
+    return list(my_boarding_pass_list)
+
+async def get_passenger_list_from_bording_pass_list(boarding_pass_list: List[BoardingPass], cursor):
+    passenger_list = map(get_passenger_from_boarding_pass(cursor=cursor), boarding_pass_list)
+    return list(passenger_list)
+
+async def main():
+    my_connection = get_connection()
+    cursor = await my_connection.cursor()
+    my_boarding_pass_list = get_boarding_pass_list_by_flight_by_id(1, cursor)
+    my_passengers = get_passenger_list_from_bording_pass_list(my_boarding_pass_list, cursor)
+    my_connection.close()
+    rpta = json.dumps(my_passengers, cls=PassengerWithBoardingPassEncoder)
+
+    print(rpta)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
+loop.close()
+
+       
 # @app.get("/boarding_pass")
 # def get_boarding_passs(): 
 #     connection = get_connection()
@@ -196,21 +231,6 @@ def get_connection():
 
 # print(get_flight_by_id(1))
 
-connection = get_connection()
-
-def transform_to_boarding_pass(row):
-    return json.dumps(BoardingPass(row[0], row[1], row[2], row[3], row[4], row[5])
-).__dict__
-def get_boarding_pass_list_by_flight_by_id(id: int):
-    query = f"SELECT * FROM boarding_pass WHERE flight_id = {id}".format(id)
-    cursor = connection.cursor()
-    cursor.execute(query)
-
-    result = cursor.fetchall()
-    my_boarding_pass_list = map(transform_to_boarding_pass, result)
-    return list(my_boarding_pass_list)
-
-print(get_boarding_pass_list_by_flight_by_id(1))
 
 # # app = FastAPI()
 # # app.title = "Reto técnico: Simulación check-in aerolínea"
